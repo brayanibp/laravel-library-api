@@ -12,4 +12,6 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 RUN chown -R laravel:laravel /var/www/html
 
+ADD ./.env.example /var/www/html/.env
+
 RUN cd /var/www/html && php artisan migrate
