@@ -1,8 +1,8 @@
 version: "3.9"
 
 networks:
-    laravel:
-        name: laravel
+    library_api:
+        name: library_api
 
 services:
 
@@ -11,38 +11,45 @@ services:
             context: .
             dockerfile: nginx.dockerfile
         depends_on:
-            - php
-            - mysql
+            - api
+            - db
         container_name: nginx
+        restart: unless-stopped
         ports:
             - 80:80
             - 443:443
         volumes:
             - ./library-api:/var/www/html
         networks:
-            - laravel
+            - library_api
 
-    php:
-        build:
-            context: .
-            dockerfile: php.dockerfile
-        container_name: php
-        volumes:
-            - ./library-api:/var/www/html
-        networks:
-            - laravel
-
-    mysql:
+    db:
         image: mysql:8.0.27
-        container_name: mysql
+        container_name: db
         ports:
             - 3306:3306
         volumes:
             - ./mysql:/var/lib/mysql
+        restart: unless-stopped
         environment:
             MYSQL_DATABASE: library_db
             MYSQL_USER: admin
             MYSQL_PASSWORD: secret
             MYSQL_ROOT_PASSWORD: secret
         networks:
-            - laravel
+            - library_api
+
+    api:
+        build:
+            context: .
+            dockerfile: php.dockerfile
+        depends_on:
+            - db
+        container_name: api
+        volumes:
+            - ./library-api:/var/www/html
+            - ./library-api/.env.example:/var/www/html/.env
+        restart: unless-stopped
+        command: [sh, -c, "sleep 60 && php artisan migrate && php artisan db:seed"]
+        networks:
+            - library_api
