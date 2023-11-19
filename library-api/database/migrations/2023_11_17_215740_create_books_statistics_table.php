@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('books_statistics', function (Blueprint $table) {
             $table->id();
+            $table->integer('book_id');
+            $table->integer('times_readed');
             $table->timestamps();
         });
     }
