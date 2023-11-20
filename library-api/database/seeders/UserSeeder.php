@@ -13,6 +13,10 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $user = User::where('email','=','brayanibp@brayanibp.dev')->get();
+        if ($user != null && $user->isNotEmpty()) {
+            return;
+        }
         User::create([
             'name' => 'Brayan Bernal',
             'email' => 'brayanibp@brayanibp.dev',
