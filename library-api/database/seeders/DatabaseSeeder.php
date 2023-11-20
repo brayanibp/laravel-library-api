@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\AuthorSeeder;
 use Database\Seeders\BookSeeder;
+use Database\Seeders\StatisticsSeeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AuthorSeeder::class,
             BookSeeder::class,
+            StatisticsSeeder::class,
         ]);
     }
 }

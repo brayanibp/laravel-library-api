@@ -14,12 +14,14 @@ services:
             - api
             - db
         container_name: nginx
-        restart: unless-stopped
+        restart: on-failure
         ports:
             - 80:80
             - 443:443
         volumes:
             - ./library-api:/var/www/html
+            - ./library-api/storage:/var/www/html/storage
+            - ./library-api/books:/var/www/html/books
         networks:
             - library_api
 
@@ -30,7 +32,7 @@ services:
             - 3306:3306
         volumes:
             - ./mysql:/var/lib/mysql
-        restart: unless-stopped
+        restart: on-failure
         environment:
             MYSQL_DATABASE: library_db
             MYSQL_USER: admin
@@ -49,7 +51,24 @@ services:
         volumes:
             - ./library-api:/var/www/html
             - ./library-api/.env.example:/var/www/html/.env
-        restart: unless-stopped
-        command: [sh, -c, "sleep 60 && php artisan migrate && php artisan db:seed"]
+            - ./library-api/storage:/var/www/html/storage
+            - ./library-api/books:/var/www/html/books
         networks:
             - library_api
+
+    artisan:
+        build:
+            context: .
+            dockerfile: php.dockerfile
+        container_name: artisan
+        depends_on:
+            - api
+            - db
+        volumes:
+            - ./library-api:/var/www/html
+        working_dir: /var/www/html
+        restart: on-failure
+        command: [sh, -c, "php artisan migrate && php artisan db:seed && rm -rf ./public/storage ./public/books && chmod -R 775 ./storage && cd public && ln -s ../storage/app/books books && ln -s ../storage/app/public storage"]
+        networks:
+            - library_api
+        

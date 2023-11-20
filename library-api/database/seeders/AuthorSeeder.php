@@ -13,6 +13,10 @@ class AuthorSeeder extends Seeder
      */
     public function run(): void
     {
+        $author = Author::where('id', '=', 1)->get();
+        if ($author != null && $author->isNotEmpty()) {
+            return;
+        }
         Author::create([
             'name' => 'James Clear',
         ]);

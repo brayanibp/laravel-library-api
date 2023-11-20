@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('genre');
             $table->string('name');
             $table->text('description');
-            $table->string('path');
+            $table->string('pdf_file');
+            $table->string('img');
             $table->timestamp('published_at');
             $table->timestamps();
         });
